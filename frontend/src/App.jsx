@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
+function App() {
 
-const App = () => {
   return (
     <div>
-      <h1>Welcome to MERN EAT</h1>
+      My APP
     </div>
   )
 }

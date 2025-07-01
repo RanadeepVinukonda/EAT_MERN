@@ -1,10 +1,12 @@
-import React from "react";
-
 const Home = () => {
-  return <div>
-    <h1>Ranadeep</h1>
-    <p>Welcome to Edu Alt Tech</p>
-  </div>;
+  return (
+    <div className="p-8 text-center">
+      <h1 className="text-4xl font-bold text-green-600">
+        Welcome to EduAltTech
+      </h1>
+      <p className="text-gray-600 mt-4">Empowering Learning with Technology</p>
+    </div>
+  );
 };
 
 export default Home;

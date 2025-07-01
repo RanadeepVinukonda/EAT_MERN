@@ -1,38 +1,51 @@
-import { Route, Routes } from "react-router";
+import { Routes, Route } from "react-router";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Courses from "./pages/Courses";
-import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Profile from "./pages/profile";
-import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import UpdateProfile from "./pages/UpdateProfile";
-import ProtectedRoute from "./components/ProtectedRoute";
+import NotFound from "./pages/NotFound";
+import ProtectRoute from "./components/ProtectedRoute";
 
-export default function App() {
+const App = () => {
   return (
-    <div className="min-h-screen bg-base-200 text-base-content">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/UpdateProfile" element={<ProtectedRoute><UpdateProfile /></ProtectedRoute>} />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <div className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectRoute>
+                <Profile />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/UpdateProfile"
+            element={
+              <ProtectRoute>
+                <UpdateProfile />
+              </ProtectRoute>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+      <Footer />
     </div>
   );
-}
+};
+
+export default App;

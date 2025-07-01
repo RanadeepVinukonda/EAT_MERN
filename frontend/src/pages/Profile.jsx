@@ -1,5 +1,4 @@
-import React from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthProvider";
 import { useNavigate } from "react-router";
 import { FaEdit } from "react-icons/fa";
 
@@ -9,24 +8,26 @@ const Profile = () => {
 
   if (!user)
     return (
-      <div className="text-center mt-10 text-green-600 text-lg">
-        Loading profile...
+      <div className="flex justify-center items-center h-screen">
+        <span className="text-green-600 text-lg">Loading profile...</span>
       </div>
     );
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 px-4">
-      {/* Cover Image */}
+    <div className="max-w-5xl mx-auto mt-10 px-4">
+      {/* Cover Image with Edit Button */}
       <div className="relative rounded-lg overflow-hidden shadow-lg">
         <img
-          src={user.coverImg || "https://placehold.co/600x200?text=Cover+Image"}
-          alt="cover"
-          className="w-full h-48 object-cover"
+          src={
+            user.coverImg || "https://placehold.co/1200x300?text=Cover+Image"
+          }
+          alt="Cover"
+          className="w-full h-56 object-cover"
         />
 
         {/* Edit Icon */}
         <button
-          className="absolute top-4 right-4 bg-white hover:bg-green-100 text-green-600 p-2 rounded-full shadow-md"
+          className="absolute top-4 right-4  bg-white hover:bg-green-100 text-green-600 p-2 rounded-full shadow-md"
           title="Edit Profile"
           onClick={() => navigate("/UpdateProfile")}
         >
@@ -34,19 +35,23 @@ const Profile = () => {
         </button>
 
         {/* Profile Image */}
-        <img
-          src={user.profileImg || "https://placehold.co/100x100?text=Profile"}
-          alt="profile"
-          className="w-24 h-24 object-cover rounded-full border-4 border-white absolute -bottom-12 left-6 bg-white"
-        />
+        <div className="absolute -bottom-0 left-6">
+          <img
+            src={user.profileImg || "https://placehold.co/120x120?text=Profile"}
+            alt="Profile"
+            className="w-24 h-24 rounded-full border-4 border-white object-cover shadow-md"
+          />
+        </div>
       </div>
 
-      {/* Profile Details */}
-      <div className="bg-white shadow-md mt-16 p-6 rounded-lg border border-green-100">
-        <h2 className="text-2xl font-bold text-green-600">{user.fullName}</h2>
+      {/* User Info Card */}
+      <div className="bg-white mt-16 rounded-lg shadow p-6 border border-green-100">
+        <h1 className="text-3xl font-bold text-green-600 mb-1">
+          {user.fullName}
+        </h1>
         <p className="text-gray-500 mb-4">@{user.username}</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
           <div>
             <span className="font-semibold text-green-500">Email:</span>
             <p>{user.email}</p>
@@ -68,9 +73,9 @@ const Profile = () => {
               <span className="font-semibold text-green-500">Link:</span>
               <a
                 href={user.link}
+                className="text-blue-600 hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
               >
                 {user.link}
               </a>
@@ -88,5 +93,4 @@ const Profile = () => {
     </div>
   );
 };
-
 export default Profile;

@@ -1,6 +1,8 @@
 
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
+
 import {v2 as cloudinary} from "cloudinary";
 import cookieParser from "cookie-parser";
 
@@ -30,6 +32,12 @@ app.use(express.json({ limit: "50mb" })); // to parse req.body
 app.use(express.urlencoded({ extended: true })); // to parse form data(urlencoded)
 
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Your Vite frontend URL
+    credentials: true, // Allow cookies to be sent with requests
+  })
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);

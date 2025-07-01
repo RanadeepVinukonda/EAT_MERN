@@ -1,67 +1,78 @@
 // src/components/Navbar.jsx
+import React from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../context/AuthProvider";
-import toast from "react-hot-toast";
 
 const Navbar = () => {
-  const { user, setUser } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("userInfo");
-    setUser(null);
-    toast.success("Logged out successfully");
+  const handleLogout = async () => {
+    await logout();
     navigate("/login");
   };
 
   return (
-    <div className="navbar bg-white border-b shadow-md px-4">
+    <div className="navbar bg-white shadow sticky top-0 z-50 px-4">
       <div className="flex-1">
-        <Link to="/" className="text-xl font-bold text-green-600">
+        <Link to="/" className="text-2xl font-bold text-green-600">
           EduAltTech
         </Link>
       </div>
-      <div className="flex-none gap-4">
-        <Link to="/" className="btn btn-ghost">
+
+      <div className="flex gap-4 items-center">
+        <Link
+          to="/"
+          className="btn btn-ghost text-green-700 hover:bg-green-100"
+        >
           Home
         </Link>
-        <Link to="/about" className="btn btn-ghost">
-          About
-        </Link>
-        <Link to="/courses" className="btn btn-ghost">
+        <Link
+          to="/courses"
+          className="btn btn-ghost text-green-700 hover:bg-green-100"
+        >
           Courses
         </Link>
-        <Link to="/contact" className="btn btn-ghost">
+        <Link
+          to="/about"
+          className="btn btn-ghost text-green-700 hover:bg-green-100"
+        >
+          About
+        </Link>
+        <Link
+          to="/contact"
+          className="btn btn-ghost text-green-700 hover:bg-green-100"
+        >
           Contact
         </Link>
 
-        {user ? (
+        {!user ? (
           <>
-            <Link
-              to="/profile"
-              className="btn btn-ghost flex items-center gap-2"
-            >
-              <div className="avatar">
-                <div className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img
-                    src={user?.profileImg || "https://placehold.co/100x100"}
-                    alt="profile"
-                  />
-                </div>
-              </div>
-              <span className="hidden sm:inline">{user?.username}</span>
+            <Link to="/login" className="btn btn-outline btn-success">
+              Login
             </Link>
+          </>
+        ) : (
+          <>
             <button
               onClick={handleLogout}
               className="btn btn-outline btn-error"
             >
               Logout
             </button>
+            <Link to="/profile">
+              <div className="avatar">
+                <div className="w-10 rounded-full ring ring-green-500 ring-offset-2">
+                  <img
+                    src={
+                      user.profileImg ||
+                      "https://placehold.co/100x100?text=User"
+                    }
+                  />
+                </div>
+              </div>
+            </Link>
           </>
-        ) : (
-          <Link to="/login" className="btn btn-primary text-white">
-            Login
-          </Link>
         )}
       </div>
     </div>

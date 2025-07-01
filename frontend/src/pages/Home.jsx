@@ -35,7 +35,7 @@ const Home = () => {
           <img
             src={welcomeImage}
             alt="Welcome"
-            className="w-full max-w-md rounded-xl shadow-lg"
+            className="w-full max-w-md rounded-xl"
           />
         </div>
       </div>

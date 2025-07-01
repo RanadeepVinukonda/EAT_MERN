@@ -2,24 +2,30 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ["Poppins", "sans-serif"],
+      },
+    },
   },
   plugins: [require("daisyui")],
   daisyui: {
     themes: [
       {
-        edualttech: {
-          primary: "#16a34a", // green
-          secondary: "#ffffff", // white
-          accent: "#22c55e", // light green
-          neutral: "#191D24",
+        eduAltTheme: {
+          primary: "#166534", // ✅ Dark green (tailwind's green-800)
+          "primary-content": "#ffffff",
+          secondary: "#22c55e", // ✅ Light green (tailwind's green-500) for hover or accents
           "base-100": "#ffffff",
-          info: "#3ABFF8",
-          success: "#36D399",
-          warning: "#FBBD23",
-          error: "#F87272",
+          accent: "#bbf7d0", // Extra light green
+          neutral: "#3d4451",
+          info: "#3abff8",
+          success: "#22c55e",
+          warning: "#facc15",
+          error: "#ef4444",
         },
       },
     ],
+    defaultTheme: "eduAltTheme",
   },
 };

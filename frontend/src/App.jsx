@@ -11,6 +11,8 @@ import Profile from "./pages/Profile";
 import UpdateProfile from "./pages/UpdateProfile";
 import NotFound from "./pages/NotFound";
 import ProtectRoute from "./components/ProtectedRoute";
+import Player from "./pages/player";
+
 
 const App = () => {
   return (
@@ -24,6 +26,15 @@ const App = () => {
           <Route path="/courses" element={<Courses />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          <Route
+            path="/courses/get/:id"
+            element={
+              <ProtectRoute>
+                <Player />
+              </ProtectRoute>
+            }></Route>
+
+
           <Route
             path="/profile"
             element={

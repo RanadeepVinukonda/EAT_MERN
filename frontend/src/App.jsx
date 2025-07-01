@@ -7,12 +7,11 @@ import Contact from "./pages/Contact";
 import Courses from "./pages/Courses";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
-import Profile from "./pages/Profile";
+import Profile from "./pages/profile";
 import UpdateProfile from "./pages/UpdateProfile";
 import NotFound from "./pages/NotFound";
-import ProtectRoute from "./components/ProtectedRoute";
-import Player from "./pages/player";
-
+import CoursePlayer from "./pages/CoursePlayer";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -29,26 +28,26 @@ const App = () => {
           <Route
             path="/courses/get/:id"
             element={
-              <ProtectRoute>
-                <Player />
-              </ProtectRoute>
+              <ProtectedRoute>
+                <CoursePlayer />
+              </ProtectedRoute>
             }></Route>
 
 
           <Route
             path="/profile"
             element={
-              <ProtectRoute>
+              <ProtectedRoute>
                 <Profile />
-              </ProtectRoute>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/UpdateProfile"
             element={
-              <ProtectRoute>
+              <ProtectedRoute>
                 <UpdateProfile />
-              </ProtectRoute>
+              </ProtectedRoute>
             }
           />
           <Route path="*" element={<NotFound />} />

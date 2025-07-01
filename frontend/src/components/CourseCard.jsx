@@ -42,7 +42,7 @@ const CourseCard = ({ lecture }) => {
         </span>
       </p>
       {/* View Button */}
-      <Link to={`/course/get/${lecture._id}`}>
+      <Link to={`/courses/get/${lecture._id}`}>
         <button className="btn btn-sm btn-success mt-2">Watch Now</button>
       </Link>
     </div>

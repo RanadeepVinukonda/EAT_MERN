@@ -1,121 +1,77 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthProvider";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useAuth } from "../context/AuthProvider";
 
-const Signup = () => {
-  const navigate = useNavigate();
+export default function Signup() {
   const { login } = useAuth();
-
-  const [formData, setFormData] = useState({
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
     fullName: "",
     username: "",
     email: "",
     password: "",
-    role: "seeker", // default
+    role: "seeker",
   });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
+  const handle = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const submit = async (e) => {
     e.preventDefault();
     try {
-      // Step 1: Signup request
-      await axios.post("/api/auth/signup", formData, {
-        withCredentials: true,
-      });
-
-      toast.success("Signup successful. Logging you in...");
-
-      // Step 2: Auto login
-      const loginSuccess = await login({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (loginSuccess) {
-        navigate("/profile"); // or navigate("/dashboard") if you want
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.error || "Signup failed");
+      await axios.post("/api/auth/signup", form, { withCredentials: true });
+      toast.success("Signed up. Logging you in...");
+      const ok = await login({ email: form.email, password: form.password });
+      if (ok) navigate("/profile");
+    } catch (e) {
+      toast.error(e?.response?.data?.error || "Signup failed");
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-green-50 px-4">
-      <div className="bg-white shadow-lg p-8 rounded-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold text-green-600 mb-6 text-center">
-          Create an Account
+    <div className="min-h-screen flex items-center justify-center bg-green-50 px-4">
+      <form
+        onSubmit={submit}
+        className="bg-white shadow-lg p-8 rounded-lg max-w-md w-full space-y-4"
+      >
+        <h2 className="text-2xl font-bold text-green-600 text-center">
+          Sign Up
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {["fullName", "username", "email", "password"].map((f, i) => (
           <input
-            type="text"
-            name="fullName"
-            placeholder="Full Name"
+            key={i}
+            type={f === "password" ? "password" : "text"}
+            name={f}
+            placeholder={f.charAt(0).toUpperCase() + f.slice(1)}
             className="input input-bordered w-full"
-            value={formData.fullName}
-            onChange={handleChange}
+            value={form[f]}
+            onChange={handle}
             required
           />
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            className="input input-bordered w-full"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            className="input input-bordered w-full"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className="input input-bordered w-full"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <select
-            name="role"
-            className="select select-bordered w-full"
-            value={formData.role}
-            onChange={handleChange}
-            required
-          >
-            <option value="seeker">Seeker</option>
-            <option value="provider">Provider</option>
-            <option value="admin">Admin</option>
-          </select>
-
-          <button type="submit" className="btn btn-success w-full mt-4">
-            Sign Up
-          </button>
-        </form>
-
-        <p className="text-sm text-center text-gray-600 mt-4">
-          Already have an account?{" "}
+        ))}
+        <select
+          name="role"
+          value={form.role}
+          onChange={handle}
+          className="select select-bordered w-full"
+        >
+          <option value="seeker">Seeker</option>
+          <option value="provider">Provider</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button type="submit" className="btn btn-success w-full">
+          Sign Up
+        </button>
+        <p className="text-sm text-center">
+          Have an account?{" "}
           <span
+            className="text-green-600 cursor-pointer"
             onClick={() => navigate("/login")}
-            className="text-green-600 cursor-pointer hover:underline"
           >
             Login
           </span>
         </p>
-      </div>
+      </form>
     </div>
   );
-};
-
-export default Signup;
+}

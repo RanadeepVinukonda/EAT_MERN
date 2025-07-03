@@ -1,12 +1,15 @@
-import { useAuth } from "../context/AuthProvider";
-import { Navigate } from "react-router";
+import React from "react";
+import { Navigate,useLocation } from "react-router";
+import { useAuth } from "../context/AuthProvider"; // ✅ FIXED
 
-const ProtectRoute = ({ children, allowedRoles }) => {
+const ProtectRoute = ({ children, allowedRoles = [] }) => {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" />;
-  if (allowedRoles && !allowedRoles.includes(user.role))
-    return <Navigate to="/" />;
+  const location = useLocation();
+
+  if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (allowedRoles.length && !allowedRoles.includes(user.role))
+    return <Navigate to="/" replace />;
+
   return children;
 };
-
 export default ProtectRoute;

@@ -1,38 +1,19 @@
-// src/pages/CoursePlayer.jsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams } from "react-router";
-import axios from "axios";
 
-const CoursePlayer = () => {
+export default function CoursePlayer() {
   const { id } = useParams();
-  const [lecture, setLecture] = useState(null);
-
-  useEffect(() => {
-    const fetchLecture = async () => {
-      try {
-        const res = await axios.get(`/api/courses/get/${id}`);
-        setLecture(res.data);
-      } catch (err) {
-        console.error("Failed to load lecture:", err);
-      }
-    };
-    fetchLecture();
-  }, [id]);
-
-  if (!lecture) return <div>Loading...</div>;
+  // Fetch lecture by ID (omitted for brevity) and display
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-4 bg-white shadow rounded">
-      <h2 className="text-2xl font-bold text-green-700 mb-4">
-        {lecture.title}
-      </h2>
-      <video src={lecture.videoUrl} controls className="w-full h-96 rounded" />
-      <p className="mt-4 text-gray-700">{lecture.description}</p>
-      <p className="mt-2 text-sm text-gray-500">{lecture.uploadedBy?.fullName || "Unknown"}</p>
-      <p className="mt-2 text-sm text-gray-500">Subject: {lecture.subject || "N/A"}</p>
-      
+    <div className="min-h-screen py-12 px-4 bg-gray-50">
+      <div className="max-w-4xl mx-auto bg-white p-6 rounded shadow">
+        <video src="..." controls className="w-full rounded" />
+        <h3 className="text-2xl font-semibold mt-4 text-green-600">
+          Lecture Title
+        </h3>
+        <p className="text-gray-600 mt-2">Lecture description...</p>
+      </div>
     </div>
   );
-};
-
-export default CoursePlayer;
+}

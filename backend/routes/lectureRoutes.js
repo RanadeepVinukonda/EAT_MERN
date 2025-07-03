@@ -1,18 +1,30 @@
 import express from "express";
 import multer from "multer";
-import { addLecture, getLectures } from "../controllers/lectureController.js";
-import { protectRoute, authorizeRoles } from "../middleware/auth.js";
+import { addLecture, getMyLectures ,getAllLectures,deleteLecture} from "../controllers/lectureController.js";
+import { protectRoute, authorizeRoles,authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.post(
   "/upload",
-  protectRoute,
+  authMiddleware,
   authorizeRoles("provider", "admin"),
   upload.fields([{ name: "thumbnail" }, { name: "video" }]),
   addLecture
 );
-router.get("/get", protectRoute, getLectures);
+router.get(
+  "/mylectures",
+  authMiddleware,
+  authorizeRoles("provider"),
+  getMyLectures
+);
+router.get(
+  "/all",
+  authMiddleware,
+  authorizeRoles("seeker", "admin"),
+  getAllLectures
+);
+router.delete("/:id", authMiddleware, authorizeRoles("admin"), deleteLecture);
 
 export default router;

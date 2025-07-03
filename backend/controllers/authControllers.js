@@ -19,7 +19,9 @@ export const signup = async (req, res) => {
     if (existingEmail) {
       return res.status(400).json({ error: "Email is already taken" });
     }
-
+    if (!["seeker", "provider", "admin"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role" });
+    }
     if (password.length < 6) {
       return res
         .status(400)

@@ -39,12 +39,49 @@ export const addLecture = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-export const getLectures = async (req, res) => {
+export const getMyLectures = async (req, res) => {
   try {
-    const lectures = await Lecture.find().populate("uploadedBy", "username");
+    const lectures = await Lecture.find({ uploadedBy: req.user._id }).populate(
+      "uploadedBy",
+      "fullName"
+    );
     res.status(200).json(lectures);
   } catch (error) {
-    console.error("Error in getLectures:", error.message);
+    console.error("Error in getMyLectures:", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
+}
+export const getAllLectures = async (req, res) => {
+  try {
+    const lectures = await Lecture.find().populate("uploadedBy", "fullName");
+    res.status(200).json(lectures);
+    
+  } catch (error) {
+    console.error("Error in getAllLectures:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+export const deleteLecture = async (req, res) => {
+  try {
+    const lecture = await Lecture.findById(req.params.id);
+    if (!lecture) {
+      return res.status(404).json({ error: "Lecture not found" });
+    }
+
+    // Check if the user is authorized to delete the lecture
+    if (lecture.uploadedBy.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).json({ error: "You are not authorized to delete this lecture" });
+    }
+
+    // Delete thumbnail and video from Cloudinary
+    await cloudinary.uploader.destroy(lecture.thumbnailUrl, { resource_type: "image" });
+    await cloudinary.uploader.destroy(lecture.videoUrl, { resource_type: "video" });
+
+    await lecture.remove();
+    res.status(200).json({ message: "Lecture deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteLecture:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+
 };

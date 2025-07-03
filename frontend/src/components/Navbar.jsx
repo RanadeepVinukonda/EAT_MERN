@@ -1,79 +1,72 @@
-// src/components/Navbar.jsx
 import React from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useAuth } from "../context/AuthProvider";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
 
   return (
-    <div className="navbar bg-white shadow sticky top-0 z-50 px-4">
-      <div className="flex-1">
+    <div className="navbar bg-base-100 shadow-md">
+      <div className="container mx-auto flex justify-between gap-5 items-center">
+        {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-green-600">
           EduAltTech
         </Link>
-      </div>
 
-      <div className="flex gap-4 items-center">
-        <Link
-          to="/"
-          className="btn btn-ghost text-green-700 hover:bg-green-100"
-        >
-          Home
-        </Link>
-        <Link
-          to="/courses"
-          className="btn btn-ghost text-green-700 hover:bg-green-100"
-        >
-          Courses
-        </Link>
-        <Link
-          to="/about"
-          className="btn btn-ghost text-green-700 hover:bg-green-100"
-        >
-          About
-        </Link>
-        <Link
-          to="/contact"
-          className="btn btn-ghost text-green-700 hover:bg-green-100"
-        >
-          Contact
-        </Link>
+        {/* Navigation */}
+        <div className="flex gap-12 items-center">
+          <Link className="hover:text-green-600 font-medium" to="/">
+            Home
+          </Link>
+          <Link className="hover:text-green-600 font-medium" to="/courses">
+            Courses
+          </Link>
+          <Link className="hover:text-green-600 font-medium" to="/about">
+            About
+          </Link>
+          <Link className="hover:text-green-600 font-medium" to="/contact">
+            Contact
+          </Link>
 
-        {!user ? (
-          <>
-            <Link to="/login" className="btn btn-outline btn-success">
-              Login
-            </Link>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={handleLogout}
-              className="btn btn-outline btn-error"
-            >
-              Logout
-            </button>
-            <Link to="/profile">
-              <div className="avatar">
-                <div className="w-10 rounded-full ring ring-green-500 ring-offset-2">
+          {user ? (
+            // User Dropdown
+            <div className="dropdown dropdown-end">
+              <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+                <div className="w-10 rounded-full ring ring-green-600 ring-offset-2">
                   <img
-                    src={
-                      user.profileImg ||
-                      "https://placehold.co/100x100?text=User"
-                    }
+                    src={user.profileImg || "/default-avatar.png"}
+                    alt="profile"
                   />
                 </div>
-              </div>
-            </Link>
-          </>
-        )}
+              </label>
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+              >
+                <li>
+                  <Link to="/profile" className="text-green-600">
+                    Profile
+                  </Link>
+                </li>
+                <li>
+                  <button onClick={logout} className="text-red-500">
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
+          ) : (
+            // Guest links
+            <>
+              <Link
+                to="/login"
+                className="btn btn-outline btn-sm text-green-600"
+              >
+                Login
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -3,14 +3,14 @@ import User from "../models/usermodel.js";
 import bcrypt from "bcryptjs";
 export const signup = async (req, res) => {
   try {
-    const { fullName, username, email, password } = req.body;
+    const { fullName, username, email, password ,role} = req.body;
     const existingUser = await User.findOne({ username });
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const existingEmail = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: "Username is already taken" });
     }
-    if (!fullName || !username || !email || !password) {
+    if (!fullName || !username || !email || !password||!role) {
       return res.status(400).json({ error: "All fields are required" });
     }
     if (!emailRegex.test(email)) {
@@ -33,6 +33,7 @@ export const signup = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      role,
     });
 
     if (newUser) {
@@ -44,6 +45,7 @@ export const signup = async (req, res) => {
         fullName: newUser.fullName,
         username: newUser.username,
         email: newUser.email,
+        role: newUser.role,
       });
     } else {
       res.status(400).json({ error: "Invalid user data" });
@@ -76,6 +78,7 @@ export const login = async (req, res) => {
       email: user.email,
       profileImg: user.profileImg,
       coverImg: user.coverImg,
+      role: user.role,
       bio: user.bio,
       link: user.link,
     });

@@ -25,6 +25,6 @@ router.get(
   authorizeRoles("seeker", "admin"),
   getAllLectures
 );
-router.delete("/:id", authMiddleware, authorizeRoles("admin"), deleteLecture);
+router.delete("/:id", authMiddleware, authorizeRoles("admin","provider"), deleteLecture);
 
 export default router;

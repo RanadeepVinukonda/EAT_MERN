@@ -9,7 +9,7 @@ const Courses = () => {
   useEffect(() => {
     const fetchLectures = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/courses/get", {
+        const res = await axios.get("/api/courses/get", {
           withCredentials: true,
         });
         setLectures(res.data);

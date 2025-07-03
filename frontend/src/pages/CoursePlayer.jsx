@@ -10,7 +10,7 @@ const CoursePlayer = () => {
   useEffect(() => {
     const fetchLecture = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/courses/get/${id}`);
+        const res = await axios.get(`/api/courses/get/${id}`);
         setLecture(res.data);
       } catch (err) {
         console.error("Failed to load lecture:", err);

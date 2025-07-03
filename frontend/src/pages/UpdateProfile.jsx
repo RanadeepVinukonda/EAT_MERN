@@ -42,7 +42,7 @@ const UpdateProfile = () => {
     e.preventDefault();
     try {
       const res = await axios.put(
-        "http://localhost:5000/api/user/update",
+        "/api/user/update",
         formData,
         { withCredentials: true }
       );

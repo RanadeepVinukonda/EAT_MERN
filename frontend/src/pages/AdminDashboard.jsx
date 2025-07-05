@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
-import axios from "axios";
+import api from "../axios"; // Adjust the path as necessary
 import { toast } from "react-hot-toast";
 
 const AdminDashboard = () => {
@@ -18,7 +18,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("/api/admin/users", {
+      const res = await api.get("/admin/users", {
         withCredentials: true,
       });
       setUsers(res.data);
@@ -29,7 +29,7 @@ const AdminDashboard = () => {
 
   const fetchLectures = async () => {
     try {
-      const res = await axios.get("/api/courses/all", { withCredentials: true });
+      const res = await api.get("/courses/all", { withCredentials: true });
       setLectures(res.data);
     } catch (err) {
       toast.error("Failed to load lectures");
@@ -39,7 +39,7 @@ const AdminDashboard = () => {
   const deleteUser = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      await axios.delete(`/api/admin/user/${id}`, { withCredentials: true });
+      await api.delete(`/admin/user/${id}`, { withCredentials: true });
       toast.success("User deleted");
       fetchUsers();
     } catch (err) {
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
   const deleteLecture = async (id) => {
     if (!window.confirm("Delete this lecture?")) return;
     try {
-      await axios.delete(`/api/admin/lecture/${id}`, { withCredentials: true });
+      await api.delete(`/admin/lecture/${id}`, { withCredentials: true });
       toast.success("Lecture deleted");
       fetchLectures();
     } catch (err) {

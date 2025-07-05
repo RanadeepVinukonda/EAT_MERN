@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../axios"; // Adjust the path as necessary
 import CourseCard from "../components/CourseCard";
 
 export default function Courses() {
   const [lectures, setLectures] = useState([]);
   useEffect(() => {
-    axios
-      .get("/api/courses/all", { withCredentials: true })
+    api
+      .get("/courses/all", { withCredentials: true })
       .then((res) => setLectures(res.data))
       .catch(console.error);
   }, []);

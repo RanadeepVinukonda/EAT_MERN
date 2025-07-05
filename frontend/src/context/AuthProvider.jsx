@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../axios"; // Adjust the path as necessary
 import { useLocation, useNavigate } from "react-router";
 import { toast } from "react-hot-toast";
 
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/api/auth/me", {
+        const res = await api.get("/auth/me", {
           withCredentials: true,
         });
         setUser(res.data);
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   // ✅ Login function
   const login = async (credentials) => {
     try {
-      const res = await axios.post("/api/auth/login", credentials, {
+      const res = await api.post("/auth/login", credentials, {
         withCredentials: true,
       });
       setUser(res.data);
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
   // ✅ Logout function
   const logout = async () => {
     try {
-      await axios.post("/api/auth/logout", {}, { withCredentials: true });
+      await api.post("/auth/logout", {}, { withCredentials: true });
       setUser(null);
       navigate("/login");
       toast.success("Logged out successfully");

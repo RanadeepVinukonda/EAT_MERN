@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthProvider";
-import axios from "axios";
+import api from "../axios"; // Adjust the path as necessary
 import { toast } from "react-hot-toast";
 
 export default function Signup() {
@@ -26,7 +26,7 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/auth/signup", form, {
+      await api.post("/auth/signup", form, {
         withCredentials: true,
       });
       toast.success("Signup successful! Logging you in...");

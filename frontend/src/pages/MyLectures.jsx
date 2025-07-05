@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../axios"; // Adjust the path as necessary
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-hot-toast";
 import CourseCard from "../components/CourseCard";
@@ -19,7 +19,7 @@ const MyLectures = () => {
   useEffect(() => {
     const fetchLectures = async () => {
       try {
-        const res = await axios.get("/api/courses/mylectures", {
+        const res = await api.get("/courses/mylectures", {
           withCredentials: true,
         });
         setLectures(res.data);
@@ -57,7 +57,7 @@ const MyLectures = () => {
     }
 
     try {
-      const res = await axios.post("/api/courses/upload", formData, {
+      const res = await api.post("/courses/upload", formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",

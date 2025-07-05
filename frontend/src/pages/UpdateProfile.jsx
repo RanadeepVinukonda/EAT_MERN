@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import api from "../axios"; // Adjust the path as necessary
 
 const UpdateProfile = () => {
   const { user, setUser } = useAuth();
@@ -33,7 +33,7 @@ const UpdateProfile = () => {
     }
 
     try {
-      const res = await axios.put("/api/user/update", formData, {
+      const res = await api.put("/user/update", formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });

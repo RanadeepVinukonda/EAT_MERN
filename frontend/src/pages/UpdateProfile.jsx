@@ -1,61 +1,108 @@
+// src/pages/UpdateProfile.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthProvider";
-import axios from "axios";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
-export default function UpdateProfile() {
+const UpdateProfile = () => {
   const { user, setUser } = useAuth();
-  const [form, setForm] = useState({
-    fullName: user.fullName,
-    bio: user.bio || "",
-    link: user.link || "",
-  });
-  const handle = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const navigate = useNavigate();
 
-  const submit = async (e) => {
+  const [form, setForm] = useState({
+    fullName: user?.fullName || "",
+    bio: user?.bio || "",
+    link: user?.link || "",
+    profileImg: null,
+    coverImg: null,
+  });
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setForm({ ...form, [name]: files ? files[0] : value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    for (let key in form) {
+      if (form[key]) {
+        formData.append(key, form[key]);
+      }
+    }
+
     try {
-      const res = await axios.put("/api/auth/me", form, {
+      const res = await axios.put("/api/user/update", formData, {
         withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
       });
+
       setUser(res.data);
-      toast.success("Profile updated!");
-    } catch {
-      toast.error("Update failed");
+      toast.success("Profile updated successfully!");
+      navigate("/profile");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Update failed");
     }
   };
 
   return (
-    <div className="min-h-screen px-4 py-12 bg-green-50">
+    <div className="min-h-screen bg-green-50 flex items-center justify-center px-4">
       <form
-        onSubmit={submit}
-        className="max-w-lg mx-auto bg-white p-8 rounded shadow"
+        onSubmit={handleSubmit}
+        className="bg-white p-8 rounded-lg shadow max-w-lg w-full space-y-4"
       >
-        <h2 className="text-2xl font-bold text-green-600 mb-4">Edit Profile</h2>
+        <h2 className="text-2xl font-bold text-green-600 text-center mb-4">
+          Update Profile
+        </h2>
+
         <input
+          type="text"
           name="fullName"
           value={form.fullName}
-          onChange={handle}
+          onChange={handleChange}
           placeholder="Full Name"
-          className="input input-bordered w-full mb-3"
+          className="input input-bordered w-full"
           required
+        />
+        <input
+          type="text"
+          name="link"
+          value={form.link}
+          onChange={handleChange}
+          placeholder="Link (LinkedIn, Website, etc)"
+          className="input input-bordered w-full"
         />
         <textarea
           name="bio"
           value={form.bio}
-          onChange={handle}
-          placeholder="Bio"
-          className="textarea textarea-bordered w-full mb-3"
+          onChange={handleChange}
+          placeholder="Short Bio"
+          className="textarea textarea-bordered w-full"
         />
+        <label className="block font-semibold">Profile Image</label>
         <input
-          name="link"
-          value={form.link}
-          onChange={handle}
-          placeholder="Your Link"
-          className="input input-bordered w-full mb-3"
+          type="file"
+          name="profileImg"
+          accept="image/*"
+          onChange={handleChange}
+          className="file-input file-input-bordered w-full"
         />
-        <button className="btn btn-success w-full">Save Changes</button>
+        <label className="block font-semibold">Cover Image</label>
+        <input
+          type="file"
+          name="coverImg"
+          accept="image/*"
+          onChange={handleChange}
+          className="file-input file-input-bordered w-full"
+        />
+
+        <button type="submit" className="btn btn-success w-full">
+          Update Profile
+        </button>
       </form>
     </div>
   );
-}
+};
+
+export default UpdateProfile;

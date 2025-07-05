@@ -10,10 +10,11 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import lectureRoutes from "./routes/lectureRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 
 
-import connectMongoDB from "./db/connectMongoDB.js";
+import connectMongoDB from "./db/connectMongoDB.js";	
 dotenv.config();
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -37,11 +38,13 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true })); // to parse form data(urlencoded)
 
+
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/courses", lectureRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 app.listen(PORT, () => {

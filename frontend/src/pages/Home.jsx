@@ -40,7 +40,7 @@ const Home = () => {
               </button>
             </Link>
           ) : user.role === "provider" ? (
-            <Link to="/upload-lecture">
+            <Link to="/my-lectures">
               <button className="btn btn-success btn-wide">
                 Upload Lecture
               </button>

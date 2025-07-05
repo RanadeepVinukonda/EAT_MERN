@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Fetch user on mount
+  // ✅ Fetch user on app load (to handle cookies)
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -30,15 +30,15 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
+  // ✅ Login function
   const login = async (credentials) => {
     try {
       const res = await axios.post("/api/auth/login", credentials, {
         withCredentials: true,
       });
       setUser(res.data);
-      toast.success("Login successful!");
 
-      // Redirect to the page user came from or to profile
+      // Navigate to previous path or /profile
       const redirectTo = location.state?.from?.pathname || "/profile";
       navigate(redirectTo, { replace: true });
 
@@ -49,23 +49,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ Logout function
   const logout = async () => {
     try {
       await axios.post("/api/auth/logout", {}, { withCredentials: true });
       setUser(null);
-      toast.success("Logged out!");
       navigate("/login");
+      toast.success("Logged out successfully");
     } catch (error) {
       toast.error("Logout failed");
     }
   };
 
+  // ✅ Provide all necessary auth state
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, setUser, login, logout, loading }}>
+      {!loading ? children : <p className="text-center mt-10">Loading...</p>}
     </AuthContext.Provider>
   );
 };
 
-// ✅ Custom hook for accessing auth
+// ✅ Custom hook for components to use
 export const useAuth = () => useContext(AuthContext);

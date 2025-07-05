@@ -1,9 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [tab, setTab] = useState("users");
+
+  const [users, setUsers] = useState([]);
+  const [lectures, setLectures] = useState([]);
+
+  // Fetch users and lectures on mount
+  useEffect(() => {
+    fetchUsers();
+    fetchLectures();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await axios.get("/api/admin/users", {
+        withCredentials: true,
+      });
+      setUsers(res.data);
+    } catch (err) {
+      toast.error("Failed to load users");
+    }
+  };
+
+  const fetchLectures = async () => {
+    try {
+      const res = await axios.get("/api/courses/all", { withCredentials: true });
+      setLectures(res.data);
+    } catch (err) {
+      toast.error("Failed to load lectures");
+    }
+  };
+
+  const deleteUser = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    try {
+      await axios.delete(`/api/admin/user/${id}`, { withCredentials: true });
+      toast.success("User deleted");
+      fetchUsers();
+    } catch (err) {
+      toast.error("Failed to delete user");
+    }
+  };
+
+  const deleteLecture = async (id) => {
+    if (!window.confirm("Delete this lecture?")) return;
+    try {
+      await axios.delete(`/api/admin/lecture/${id}`, { withCredentials: true });
+      toast.success("Lecture deleted");
+      fetchLectures();
+    } catch (err) {
+      toast.error("Failed to delete lecture");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-green-50 p-6">
@@ -42,59 +95,74 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        {/* Content */}
+        {/* Users Tab */}
         {tab === "users" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {/* Replace with dynamic user data */}
-            <div className="card bg-white shadow border border-green-100">
-              <div className="card-body">
-                <h2 className="card-title text-green-700">John Doe</h2>
-                <p>Role: Seeker</p>
-                <p>Email: john@example.com</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-sm btn-error">Delete</button>
+            {users.map((u) => (
+              <div
+                key={u._id}
+                className="card bg-white shadow border border-green-100"
+              >
+                <div className="card-body">
+                  <h2 className="card-title text-green-700">
+                    {u.fullName || u.username}
+                  </h2>
+                  <p>Role: {u.role}</p>
+                  <p>Email: {u.email}</p>
+                  <div className="card-actions justify-end">
+                    <button
+                      onClick={() => deleteUser(u._id)}
+                      className="btn btn-sm btn-error"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="card bg-white shadow border border-green-100">
-              <div className="card-body">
-                <h2 className="card-title text-green-700">Jane Smith</h2>
-                <p>Role: Provider</p>
-                <p>Email: jane@example.com</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-sm btn-error">Delete</button>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         )}
 
+        {/* Lectures Tab */}
         {tab === "lectures" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {/* Replace with dynamic lecture data */}
-            <div className="card bg-white shadow border border-green-100">
-              <div className="card-body">
-                <h2 className="card-title text-green-700">React Basics</h2>
-                <p>Uploaded By: Jane Smith</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-sm btn-error">Delete</button>
+            {lectures.map((lec) => (
+              <div
+                key={lec._id}
+                className="card bg-white shadow border border-green-100"
+              >
+                <div className="card-body">
+                  <h2 className="card-title text-green-700">{lec.title}</h2>
+                  <p>Subject: {lec.subject}</p>
+                  <p>Uploaded By: {lec.uploadedBy?.fullName || "Unknown"}</p>
+                  <div className="card-actions justify-end">
+                    <button
+                      onClick={() => deleteLecture(lec._id)}
+                      className="btn btn-sm btn-error"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         )}
 
+        {/* Analytics Tab */}
         {tab === "analytics" && (
           <div className="bg-white p-6 rounded shadow text-gray-700 border border-green-100">
             <h2 className="text-xl font-semibold text-green-600 mb-4">
               Platform Analytics
             </h2>
             <ul className="list-disc list-inside space-y-2">
-              <li>📊 Total users: 120</li>
-              <li>🎓 Total lectures: 45</li>
-              <li>✅ Active providers: 10</li>
-              <li>📈 Most viewed lecture: "AI for Beginners"</li>
+              <li>Total users: {users.length}</li>
+              <li>Total lectures: {lectures.length}</li>
+              <li>
+                Active providers:{" "}
+                {users.filter((u) => u.role === "provider").length}
+              </li>
+              <li>Most recent lecture: {lectures[0]?.title || "N/A"}</li>
             </ul>
           </div>
         )}

@@ -6,7 +6,7 @@ export default function Courses() {
   const [lectures, setLectures] = useState([]);
   useEffect(() => {
     axios
-      .get("/api/courses", { withCredentials: true })
+      .get("/api/courses/all", { withCredentials: true })
       .then((res) => setLectures(res.data))
       .catch(console.error);
   }, []);

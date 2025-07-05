@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 
+
 const CourseCard = ({ lecture }) => {
   return (
     <div className="bg-white border border-green-100 rounded-lg shadow-md p-4 hover:shadow-lg transition duration-300">
@@ -31,6 +32,13 @@ const CourseCard = ({ lecture }) => {
         <span className="text-green-600 font-medium">
           {lecture.uploadedBy?.fullName || "Unknown"}
         </span>
+        /* Add delete functionality if needed */
+        <button
+          onClick={() => deleteUser(u._id)}
+          className="btn btn-sm btn-error"
+        >
+          Delete
+        </button>
       </p>
       <Link to={`/course/${lecture._id}`}>
         <button className="btn btn-sm btn-success mt-2">Watch Now</button>

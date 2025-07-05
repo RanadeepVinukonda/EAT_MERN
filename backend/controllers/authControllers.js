@@ -1,6 +1,7 @@
 import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
 import User from "../models/usermodel.js";
 import bcrypt from "bcryptjs";
+//signup Controller
 export const signup = async (req, res) => {
   try {
     const { fullName, username, email, password ,role} = req.body;
@@ -57,39 +58,51 @@ export const signup = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
+//login Controller
 export const login = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    const isPasswordCorrect = await bcrypt.compare(
-      password,
-      user?.password || ""
-    );
-
-    if (!user || !isPasswordCorrect) {
-      return res.status(400).json({ error: "Invalid username or password" });
+    const { username, password } = req.body || {};
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ error: "Username and password are required" });
     }
 
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    // Set cookie
     generateTokenAndSetCookie(user._id, res);
 
-    res.status(200).json({
+    // ✅ Send full user object (excluding password)
+    const userData = {
       _id: user._id,
       fullName: user.fullName,
       username: user.username,
       email: user.email,
-      profileImg: user.profileImg,
-      coverImg: user.coverImg,
       role: user.role,
-      bio: user.bio,
-      link: user.link,
-    });
+      profileImg: user.profileImg || "",
+      coverImg: user.coverImg || "",
+      phone: user.phone || "",
+      address: user.address || "",
+      link: user.link || "",
+      bio: user.bio || "",
+    };
+
+    return res.status(200).json(userData);
   } catch (error) {
-    console.log("Error in login controller", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("❌ Login error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
-
+//logout Controller
 export const logout = async (_, res) => {
   try {
     res.cookie("jwt", "", { maxAge: 0 });
@@ -99,7 +112,7 @@ export const logout = async (_, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
+// getMe Controller
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password");
@@ -109,4 +122,3 @@ export const getMe = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-

@@ -1,33 +1,50 @@
 import {v2 as cloudinary} from "cloudinary";
 import Lecture from "../models/lecturemodel.js";
 
+
+
 export const addLecture = async (req, res) => {
   try {
-    const { title, description, subject, thumbnail, video } = req.body;
+    const { title, description, subject } = req.body;
+    const thumbnailFile = req.files?.thumbnail?.[0];
+    const videoFile = req.files?.video?.[0];
 
-    if (!title || !thumbnail || !video) {
+    if (!title || !thumbnailFile || !videoFile) {
       return res
         .status(400)
         .json({ error: "Title, thumbnail, and video are required" });
     }
 
-    // Upload thumbnail to Cloudinary
-    const thumbRes = await cloudinary.uploader.upload(thumbnail, {
-      folder: "lectures/thumbnails",
+    // Upload thumbnail
+    const thumbnailUpload = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "lectures/thumbnails" },
+        (err, result) => {
+          if (err) return reject(err);
+          resolve(result.secure_url);
+        }
+      );
+      stream.end(thumbnailFile.buffer);
     });
 
-    // Upload video to Cloudinary
-    const videoRes = await cloudinary.uploader.upload(video, {
-      resource_type: "video",
-      folder: "lectures/videos",
+    // Upload video
+    const videoUpload = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "lectures/videos", resource_type: "video" },
+        (err, result) => {
+          if (err) return reject(err);
+          resolve(result.secure_url);
+        }
+      );
+      stream.end(videoFile.buffer);
     });
 
     const lecture = new Lecture({
       title,
       description,
       subject,
-      thumbnailUrl: thumbRes.secure_url,
-      videoUrl: videoRes.secure_url,
+      thumbnailUrl: thumbnailUpload,
+      videoUrl: videoUpload,
       uploadedBy: req.user._id,
     });
 
@@ -39,6 +56,7 @@ export const addLecture = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 export const getMyLectures = async (req, res) => {
   try {
     const lectures = await Lecture.find({ uploadedBy: req.user._id }).populate(
